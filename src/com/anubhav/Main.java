@@ -5,21 +5,23 @@ import java.util.Scanner;
 
 public class Main {
 
+	static int totalAmount=0;
 	static HashMap<Integer, Object> hashMap = new HashMap<>();
 	static int vehicleCount= 0;
-	static int count =0;
 	static int amount=0;
 	static Fastag fastag = new Fastag();
 	static Cash cash = new Cash();
 	static Scanner scan = new Scanner(System.in);
 	
 	public static void forFastag() {
+		System.out.println("Enter Vehicle Number:");
+		String vehicleNumber = scan.next();
+		fastag.setVehicleNumber(vehicleNumber); 
+		
 		vehicleCount = vehicleCount+1;
 		fastag.setFastag(true);
 		
-		System.out.println("Enter Vehicle Number:");
-		String vehicleNumber = scan.next();
-		fastag.setVehicleNumber(vehicleNumber);
+		
 		
 		System.out.println("Enter Vehicle Type:");
 		String vehicleType = scan.next();
@@ -29,11 +31,20 @@ public class Main {
 		String category = scan.next();
 		fastag.setVehicleCategory(category);
 		
-		System.out.println("Enter Balance:");
-		int balance = scan.nextInt();
-		fastag.setBalance(balance);
 		
-		hashMap.put(vehicleCount, fastag);
+		
+		if(!hashMap.containsValue(fastag)) {
+			System.out.println("Enter Balance:");
+			int balance = scan.nextInt();
+			fastag.setBalance(balance);
+			hashMap.put(vehicleCount, fastag);
+			
+		}
+		else
+		{
+			fastag.setBalance(fastag.getBalance()-amount);
+		}
+		
 		System.out.println("Added");
 	}
 	
@@ -54,19 +65,26 @@ public class Main {
 		cash.setVehicleCategory(category);
 		
 		amount=amount+40;
-		hashMap.put(vehicleCount, cash);
+		
+		if(!hashMap.containsValue(fastag)) {
+			
+			hashMap.put(vehicleCount, cash);
+			
+		}
 		System.out.println("Added");
 	}
 	
 	 public static int getAmountBasedOnCategory(Object object) {
 		 
 		 String category = null;
+		 int count=0;
 		 if(object.equals(fastag)) {
 			 category= fastag.getVehicleCategory();
-			 
+			 count=fastag.getCount();
 		 }
 		 else {
 			 category = cash.getVehicleCategory();
+			 count=cash.getCount();
 		 }
 		 switch(category){
 			case "Heavy":if(count!=2) {
@@ -100,12 +118,14 @@ public class Main {
 		 
 		 if(fastag.getBalance()>=amount) {
 			 fastag.setBalance(fastag.getBalance()-amount);
+			 totalAmount=amount+totalAmount;
 		 return 0;
 		 }
 		 else {
 			 amount=(amount-fastag.getBalance())+40;
 			 fastag.setBalance(0);
 //			 forCAsh();
+			 totalAmount=amount+totalAmount;
 			 return amount;
 		 }
 		 
@@ -121,37 +141,40 @@ public class Main {
 		
 		if(isFastag) {
 			forFastag();
-			if(count<2) {
-				count=count+1;
+			if(fastag.getCount()<2) {
+				fastag.setCount(fastag.getCount()+1);;
 				int cost = getAmountBasedOnCategory(fastag);
 				int costByFastag = getAmountBasedOnFastag(cost);
 				System.out.println("Amount Paid By Cash:"+costByFastag);
+				System.out.println("Total Amount Deducted:"+(cost+costByFastag));
 			}
 			
 			else
 			{
-				count=0;
+				fastag.setCount(0);
 			}
 		
-			System.out.println(hashMap);
+
+			
 			
 		}
 		else {
 			forCAsh();
-			if(count<2) {
-				count=count+1;
+			if(cash.getCount()<2) {
+				cash.setCount(cash.getCount()+1);
 				int cost = getAmountBasedOnCategory(cash);
 				System.out.println("Amount Paid By Cash:"+cost);
-				
+				totalAmount=cost+totalAmount;
 			}
 			
 			else
 			{
-				count=0;
+				cash.setCount(0);
 			}
 			System.out.println("amount:"+amount);
-			System.out.println(hashMap);
+//			System.out.println(hashMap);
 		}
+		amount=0;
 		System.out.println("Are you want to fill more or what? or print details:");
 		boolean ans = scan.nextBoolean();
 		if(ans) {
@@ -159,7 +182,8 @@ public class Main {
 		}
 		else
 		{
-			System.out.println("Amount:" +amount);
+			System.out.println(hashMap.values());
+			System.out.println("Total Toll Collected:"+totalAmount);
 		}
 	}
 }

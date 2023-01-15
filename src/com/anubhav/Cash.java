@@ -5,6 +5,14 @@ public class Cash {
 	private String vehicleNumber;
 	private String vehicleType;
 	private String vehicleCategory;
+    private int count;
+	
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
 	
 	public String getVehicleCategory() {
 		return vehicleCategory;
